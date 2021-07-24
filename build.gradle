@@ -21,6 +21,7 @@ micronaut {
         incremental(true)
         annotations("org.cerion.stocks.*")
     }
+
 }
 
 dependencies {
@@ -34,11 +35,15 @@ dependencies {
     implementation("io.micronaut:micronaut-validation")
 
     implementation("com.github.asheragy.stocks-core:stocks-core-jvm:339ee557da")
-
     runtimeOnly("com.fasterxml.jackson.module:jackson-module-kotlin")
 
-    testImplementation("io.micronaut:micronaut-http-client")
+    // Database
+    annotationProcessor("io.micronaut.data:micronaut-data-processor:2.4.7")
+    implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
+    runtime("com.h2database:h2")
+    runtime("io.micronaut.sql:micronaut-jdbc-tomcat")
 
+    testImplementation("io.micronaut:micronaut-http-client")
 }
 
 
