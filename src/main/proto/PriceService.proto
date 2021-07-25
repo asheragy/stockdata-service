@@ -17,4 +17,5 @@ message GetPricesRequest {
 
 message GetPricesReply {
   string message = 1;
+  bool cached = 2;
 }

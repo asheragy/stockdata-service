@@ -3,28 +3,26 @@ package org.cerion.stocks
 import io.micronaut.core.annotation.Introspected
 import io.micronaut.data.annotation.Repository
 import io.micronaut.data.repository.CrudRepository
+import io.micronaut.data.repository.GenericRepository
 import org.cerion.stocks.core.web.FetchInterval
 import java.io.Serializable
 import javax.persistence.*
 
 @Entity
-@Table(name = "PRICES")
+@Table(name = "prices")
 @IdClass(PriceId::class)
 data class PriceDb(@Id var symbol: String,
-                   @Id var fetchInterval: FetchInterval,
+                   @Enumerated(EnumType.STRING)
+                   @Id var fetch_interval: FetchInterval,
                    @Id var date: String)
 
-
-// TODO https://stackoverflow.com/questions/32038177/kotlin-with-jpa-default-constructor-hell
 @Introspected
-class PriceId : Serializable {
-    var symbol: String? = null
-    var fetchInterval: FetchInterval? = null
-    var date: String? = null
-}
+data class PriceId(val symbol: String = "",
+                   val fetch_interval: FetchInterval = FetchInterval.DAILY,
+                   val date: String = "") : Serializable
 
 @Repository
 interface PriceRepository : CrudRepository<PriceDb, PriceId> {
-    //@Executable
-    //fun find(title: String): Book
+    @io.micronaut.data.annotation.Query("FROM PriceDb p WHERE p.symbol = :symbol AND p.fetch_interval = :fetchInterval")
+    fun findByList(symbol: String, fetchInterval: FetchInterval): List<PriceDb>
 }

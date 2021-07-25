@@ -1,3 +1,9 @@
+buildscript {
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-noarg:1.4.32"
+    }
+}
+
 plugins {
     id("org.jetbrains.kotlin.jvm") version "1.4.32"
     id("org.jetbrains.kotlin.kapt") version "1.4.32"
@@ -6,6 +12,9 @@ plugins {
     id("org.jetbrains.kotlin.plugin.allopen") version "1.4.32"
     id("com.google.protobuf") version "0.8.15"
 }
+
+// https://stackoverflow.com/questions/32038177/kotlin-with-jpa-default-constructor-hell
+apply plugin: "kotlin-jpa"
 
 version = "0.1"
 group = "org.cerion.stocks"
@@ -40,7 +49,8 @@ dependencies {
     // Database
     annotationProcessor("io.micronaut.data:micronaut-data-processor:2.4.7")
     implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
-    runtime("com.h2database:h2")
+    //runtime("com.h2database:h2")
+    runtimeOnly ("org.postgresql:postgresql:42.2.10")
     runtime("io.micronaut.sql:micronaut-jdbc-tomcat")
 
     testImplementation("io.micronaut:micronaut-http-client")

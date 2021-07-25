@@ -18,29 +18,22 @@ class PricesEndpoint : PriceServiceGrpc.PriceServiceImplBase() {
     lateinit var repository: PriceRepository
 
     override fun get(request: GetPricesRequest, responseObserver: StreamObserver<GetPricesReply>) {
-        val prices = dataSource.getPrices("XLE", FetchInterval.MONTHLY, null)
+        val interval = FetchInterval.MONTHLY
+        val symbol = request.symbol
 
-        try {
-            val pricesDb = prices.map { PriceDb(request.symbol, FetchInterval.DAILY, it.date.toISOString()) }
-            val p1 = pricesDb[0]
+        val cached = repository.findByList(symbol, interval)
+        val prices = if(cached.isNotEmpty())
+            cached
+        else {
+            val updated = dataSource.getPrices(request.symbol, interval, null)
+            val pricesDb = updated.map { PriceDb(request.symbol, interval, it.date.toISOString()) }
 
-            repository.saveAll(pricesDb)
-
-            val test = repository.findById(PriceId().apply {
-                symbol = p1.symbol
-                fetchInterval = p1.fetchInterval
-                date = p1.date
-            })
-
-            println(test)
-
-        }
-        catch (e: Exception) {
-            e.printStackTrace();
+            repository.saveAll(pricesDb).toList()
         }
 
-
-        val reply = GetPricesReply.newBuilder().setMessage("Found: " + prices.size)
+        val reply = GetPricesReply.newBuilder()
+                .setCached(cached.isNotEmpty())
+                .setMessage("Found: " + prices.size)
         responseObserver.onNext(reply.build())
         responseObserver.onCompleted()
     }
