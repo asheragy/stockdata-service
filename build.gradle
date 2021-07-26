@@ -54,6 +54,10 @@ dependencies {
     runtime("io.micronaut.sql:micronaut-jdbc-tomcat")
 
     testImplementation("io.micronaut:micronaut-http-client")
+
+    // TODO fix duplicates
+    testRuntimeOnly ("org.postgresql:postgresql:42.2.10")
+    testRuntime("io.micronaut.sql:micronaut-jdbc-tomcat")
 }
 
 
