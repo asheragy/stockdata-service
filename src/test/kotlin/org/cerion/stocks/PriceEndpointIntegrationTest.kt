@@ -31,12 +31,18 @@ class PriceEndpointIntegrationTest {
     @Test
     fun test() {
         val request = GetPricesRequest.newBuilder().setSymbol("XLE").setInterval(Interval.Monthly).build();
-        val response = client.get(request)
+        var response = client.get(request)
 
+        val count = response.pricesCount
         assertEquals("XLE", response.symbol)
         assertFalse(response.cached)
         assertEquals(Interval.Monthly, response.interval)
         assertTrue(response.pricesCount > 0)
         assertTrue(response.getPrices(0).close > 0.0)
+
+        // Second request should use cache
+        response = client.get(request)
+        assertTrue(response.cached)
+        assertEquals(count, response.pricesCount)
     }
 }
