@@ -49,11 +49,13 @@ dependencies {
     // Database
     annotationProcessor("io.micronaut.data:micronaut-data-processor:2.4.7")
     implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
-    runtimeOnly("com.h2database:h2")
-    //runtimeOnly ("org.postgresql:postgresql:42.2.10")
+    //runtimeOnly("com.h2database:h2")
+    runtimeOnly ("org.postgresql:postgresql:42.2.10")
     runtimeOnly("io.micronaut.sql:micronaut-jdbc-tomcat")
 
     //testImplementation("io.micronaut:micronaut-http-client")
+    testImplementation "org.testcontainers:postgresql:1.15.3"
+    testCompile "org.testcontainers:junit-jupiter"
 }
 
 
