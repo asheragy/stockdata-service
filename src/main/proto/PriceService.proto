@@ -13,9 +13,28 @@ service PriceService {
 
 message GetPricesRequest {
   string symbol = 1;
+  Interval interval = 2;
 }
 
 message GetPricesReply {
-  string message = 1;
-  bool cached = 2;
+  bool cached = 1;
+  string symbol = 2;
+  Interval interval = 3;
+  repeated Price prices = 4;
+}
+
+message Price {
+  string date = 1;
+  float open = 2;
+  float high = 3;
+  float low = 4;
+  float close = 5;
+  float volume = 6;
+}
+
+enum Interval {
+  Unspecified = 0;
+  Daily = 1;
+  Weekly = 2;
+  Monthly = 3;
 }
