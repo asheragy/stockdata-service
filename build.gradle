@@ -40,6 +40,7 @@ dependencies {
     implementation("javax.annotation:javax.annotation-api")
     implementation("org.jetbrains.kotlin:kotlin-reflect:${kotlinVersion}")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8:${kotlinVersion}")
+    implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:${kotlinCoroutinesVersion}")
     runtimeOnly("ch.qos.logback:logback-classic")
     implementation("io.micronaut:micronaut-validation")
 
@@ -49,12 +50,13 @@ dependencies {
     // Database
     annotationProcessor("io.micronaut.data:micronaut-data-processor:2.4.7")
     implementation("io.micronaut.data:micronaut-data-hibernate-jpa")
-    //runtimeOnly("com.h2database:h2")
-    runtimeOnly ("org.postgresql:postgresql:42.2.10")
+    runtimeOnly("com.h2database:h2")
+    //runtimeOnly ("org.postgresql:postgresql:42.2.10")
     runtimeOnly("io.micronaut.sql:micronaut-jdbc-tomcat")
 
     //testImplementation("io.micronaut:micronaut-http-client")
     testImplementation "org.testcontainers:postgresql:1.15.3"
+    testImplementation "org.jetbrains.kotlinx:kotlinx-coroutines-test:${kotlinCoroutinesVersion}"
     testCompile "org.testcontainers:junit-jupiter"
 }
 

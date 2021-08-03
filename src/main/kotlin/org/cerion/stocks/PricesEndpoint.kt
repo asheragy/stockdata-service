@@ -19,6 +19,8 @@ class PricesEndpoint : PriceServiceGrpc.PriceServiceImplBase() {
     lateinit var repository: PriceRepository
 
     override fun get(request: GetPricesRequest, responseObserver: StreamObserver<GetPricesReply>) {
+
+        Thread.sleep(1000)
         val symbol = request.symbol
         val interval = when(request.interval) {
             Interval.Daily -> FetchInterval.DAILY

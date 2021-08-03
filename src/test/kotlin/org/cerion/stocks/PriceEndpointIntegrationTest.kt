@@ -3,6 +3,7 @@ package org.cerion.stocks
 import io.grpc.ManagedChannelBuilder
 import io.micronaut.grpc.server.GrpcEmbeddedServer
 import io.micronaut.test.extensions.junit5.annotation.MicronautTest
+import kotlinx.coroutines.*
 import org.cerion.stocks.proto.GetPricesRequest
 import org.cerion.stocks.proto.Interval
 import org.cerion.stocks.proto.PriceServiceGrpc
@@ -10,6 +11,7 @@ import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
+import java.util.concurrent.atomic.AtomicInteger
 import javax.inject.Inject
 
 
@@ -44,5 +46,44 @@ class PriceEndpointIntegrationTest {
         response = client.get(request)
         assertTrue(response.cached)
         assertEquals(count, response.pricesCount)
+    }
+
+    @Test
+    fun concurrency() = runBlocking {
+        // Avoid concurrent external requests by making the first one synchronously
+        val request = GetPricesRequest.newBuilder().setSymbol("XLE").setInterval(Interval.Monthly).build();
+        val initialCount = client.get(request).pricesCount
+        val totalCount = AtomicInteger()
+        val requests = 10
+
+        val time = measureTimeMillis {
+            withContext(Dispatchers.IO) {
+                parallelRequest(requests) {
+                    println("Starting Request")
+                    val response = client.get(request)
+                    totalCount.updateAndGet { x -> x + response.pricesCount }
+                    println("Ending")
+                }
+            }
+        }
+
+        println("Total milliseconds: $time")
+        assertEquals(initialCount * requests, totalCount.get())
+    }
+
+    suspend fun parallelRequest(count: Int, action: suspend () -> Unit) {
+        coroutineScope {
+            repeat(count) {
+                launch {
+                    action()
+                }
+            }
+        }
+    }
+
+    inline fun measureTimeMillis(block: () -> Unit): Long {
+        val start = System.currentTimeMillis()
+        block()
+        return System.currentTimeMillis() - start
     }
 }
