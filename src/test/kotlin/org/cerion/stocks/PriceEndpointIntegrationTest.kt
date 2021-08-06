@@ -9,6 +9,7 @@ import org.cerion.stocks.proto.Interval
 import org.cerion.stocks.proto.PriceServiceGrpc
 import org.junit.jupiter.api.Assertions.*
 import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Disabled
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.TestInstance
 import java.util.concurrent.atomic.AtomicInteger
@@ -49,12 +50,13 @@ class PriceEndpointIntegrationTest {
     }
 
     @Test
+    @Disabled
     fun concurrency() = runBlocking {
         // Avoid concurrent external requests by making the first one synchronously
-        val request = GetPricesRequest.newBuilder().setSymbol("XLE").setInterval(Interval.Monthly).build();
+        val request = GetPricesRequest.newBuilder().setSymbol("XLE").setInterval(Interval.Monthly).build()
         val initialCount = client.get(request).pricesCount
         val totalCount = AtomicInteger()
-        val requests = 10
+        val requests = 100
 
         val time = measureTimeMillis {
             withContext(Dispatchers.IO) {

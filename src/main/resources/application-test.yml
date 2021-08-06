@@ -1,6 +1,6 @@
-datasources:
-  default:
-    url: jdbc:tc:postgresql://localhost/integration-tests-db
-    username: sa
-    password: sa
-    driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
+#datasources:
+#  default:
+#    url: jdbc:tc:postgresql://localhost/integration-tests-db
+#    username: sa
+#    password: sa
+#    driverClassName: org.testcontainers.jdbc.ContainerDatabaseDriver
